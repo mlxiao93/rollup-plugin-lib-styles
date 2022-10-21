@@ -48,6 +48,8 @@ export async function write(data: WriteData): Promise<WriteResult> {
     plugins: data.plugins ?? [styles(data.options)],
     onwarn: (warning, warn) => {
       if (warning.code === "EMPTY_BUNDLE") return;
+      // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (warning.source === "lit") return;
       if (/Exported `\S+` as `\S+` in \S+/.test(warning.message)) return;
       warn(warning);

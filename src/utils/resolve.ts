@@ -1,6 +1,13 @@
-import resolver, { sync, AsyncOpts, SyncOpts } from "resolve";
+import resolver, { AsyncOpts, SyncOpts } from "resolve";
 import { resolve as resolveExports, legacy as resolveFields } from "resolve.exports";
 import arrayFmt from "./array-fmt";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const { sync } = resolver;
 
 type Package = { main: string; [field: string]: unknown };
 type PackageFilterFn = (pkg: Package, pkgfile: string) => Package;

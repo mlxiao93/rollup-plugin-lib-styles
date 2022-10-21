@@ -86,7 +86,9 @@ const loader: Loader<PostCSSLoaderOptions> = {
     }
 
     if (options.minimize) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const cssnanoOpts = typeof options.minimize === "object" ? options.minimize : {};
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       plugins.push(cssnano(cssnanoOpts));
     }
 
@@ -98,6 +100,8 @@ const loader: Loader<PostCSSLoaderOptions> = {
     for (const msg of res.messages)
       switch (msg.type) {
         case "warning":
+          // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           this.warn({ name: msg.plugin, message: msg.text as string });
           break;
 

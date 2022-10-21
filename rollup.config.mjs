@@ -1,4 +1,4 @@
-import { readdirSync } from "fs-extra";
+import fsExtra from "fs-extra";
 
 import { terser } from "rollup-plugin-terser";
 import { babel } from "@rollup/plugin-babel";
@@ -9,8 +9,14 @@ import json from "@rollup/plugin-json";
 import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import pkg from "./package.json";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const { readdirSync, readJSONSync } = fsExtra;
+
+const pkg = readJSONSync('./package.json');
 const extensions = [".ts", ".mjs", ".js", ".cjs", ".json"];
 
 /** @type {import('rollup').RollupOptions[]} */
@@ -19,8 +25,8 @@ const config = [
   {
     input: "./src/index.ts",
     output: [
-      { format: "cjs", file: pkg.exports.require, exports: "default" },
-      { format: "es", file: pkg.exports.import, exports: "default" },
+      { format: "cjs", file: pkg.main, interop: 'auto' },
+      { format: "es", file: pkg.module },
     ],
     plugins: [
       externals({ deps: true }),

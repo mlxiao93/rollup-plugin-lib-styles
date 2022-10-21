@@ -1,6 +1,6 @@
 {
-  "name": "rollup-plugin-styles",
-  "version": "4.0.0",
+  "name": "rollup-plugin-lib-styles",
+  "version": "1.0.0",
   "description": "Universal Rollup plugin for styles: PostCSS, Sass, Less, Stylus and more",
   "keywords": [
     "rollup",
@@ -22,7 +22,7 @@
     "url": "git+https://github.com/Anidetrix/rollup-plugin-styles.git"
   },
   "license": "MIT",
-  "author": "Anton Kudryavtsev <boblobl4@gmail.com>",
+  "author": "MaoLinXiao <xml_hn@163.com>",
   "exports": {
     "import": "./dist/index.js",
     "require": "./dist/index.cjs"
@@ -35,6 +35,7 @@
   ],
   "scripts": {
     "prebuild": "shx rm -rf dist",
+    "dev": "rollup -c --watch",
     "build": "rollup -c --environment NODE_ENV:production",
     "postbuild": "shx cp -r src/shims dist",
     "commit": "commit",

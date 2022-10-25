@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     /* Compile Checks */
     "isolatedModules": true,
-    "noEmitOnError": true,
+    "noEmitOnError": false,
     /* Strict Type-Checking Options */
     "strict": true,
     /* Additional Checks */

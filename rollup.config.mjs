@@ -25,7 +25,7 @@ const config = [
   {
     input: "./src/index.ts",
     output: [
-      { format: "cjs", file: pkg.main, interop: 'auto' },
+      { format: "cjs", file: pkg.main, interop: 'compat' },
       { format: "es", file: pkg.module },
     ],
     plugins: [

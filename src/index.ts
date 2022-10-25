@@ -1,5 +1,5 @@
 import path from "path";
-import { Plugin, OutputChunk, OutputAsset } from "rollup";
+import { Plugin, OutputChunk, OutputAsset, PluginContext } from "rollup";
 import { createFilter } from "@rollup/pluginutils";
 import cssnano from "cssnano";
 import { LoaderContext, Extracted } from "./loaders/types";
@@ -35,7 +35,7 @@ export default (options: Options = {}): Plugin => {
     dts: options.dts ?? false,
     namedExports: options.namedExports ?? false,
     autoModules: options.autoModules ?? false,
-    extensions: options.extensions ?? [".css", ".pcss", ".postcss", ".sss"],
+    extensions: options.extensions ?? [".css", ".scss", ".pcss", ".postcss", ".sss"],
     postcss: {},
   };
 
@@ -98,8 +98,10 @@ export default (options: Options = {}): Plugin => {
 
       for (const dep of ctx.deps) this.addWatchFile(dep);
 
-      for (const [fileName, source] of ctx.assets)
+      // TODO 这里好像没啥卵用
+      for (const [fileName, source] of ctx.assets) {
         this.emitFile({ type: "asset", fileName, source });
+      }
 
       if (res.extracted) {
         const { id } = res.extracted;
@@ -155,11 +157,15 @@ export default (options: Options = {}): Plugin => {
       const dir = opts.dir ?? path.dirname(opts.file!);
       const chunks = Object.values(bundle).filter((c): c is OutputChunk => c.type === "chunk");
       const manual = chunks.filter(c => !c.facadeModuleId);
+
+      // 是否保留样式引入
+      const preserveStyleImport = !!options.preserveStyleImport && opts.preserveModules && options.mode === 'extract';
+
       const emitted = opts.preserveModules
         ? chunks
         : chunks.filter(c => c.isEntry || c.isDynamicEntry);
 
-      const emittedList: [string, string[]][] = [];
+      let emittedList: EmittedItem[] = [];
 
       const getExtractedData = async (name: string, ids: string[]): Promise<ExtractedData> => {
         const fileName =
@@ -207,9 +213,25 @@ export default (options: Options = {}): Plugin => {
         return chunk.name;
       };
 
+      const getDir = (chunk: OutputChunk): string => {
+        if (chunk.facadeModuleId) {
+
+          let fileName = chunk.fileName;
+          for (const extension of loaderOpts.extensions) {
+            const reg = new RegExp(`${extension.replace('.', '\\.')}.js$`);
+            if (reg.test(fileName)) {
+              fileName = fileName.replace(reg, extension);
+              break;
+            }
+          }
+
+          return chunk.facadeModuleId.replace(`/${fileName}`, '')
+        }
+        return path.resolve(process.cwd(), 'src');
+      };
+
       const getImports = (chunk: OutputChunk): string[] => {
         const ids: string[] = [];
-
         for (const module of Object.keys(chunk.modules)) {
           const traversed: Set<string> = new Set();
           let current = [module];
@@ -247,22 +269,35 @@ export default (options: Options = {}): Plugin => {
           ids.push(...getImports(chunk).filter(id => !moved.includes(id)));
 
         const name = getName(chunks[0]);
-        emittedList.push([name, ids]);
+        const dir = getDir(chunks[0]);
+        emittedList.push([name, ids, dir]);
       } else {
         for (const chunk of manual) {
           const ids = getImports(chunk);
           if (ids.length === 0) continue;
           moved.push(...ids);
           const name = getName(chunk);
-          emittedList.push([name, ids]);
+          const dir = getDir(chunk);
+          emittedList.push([name, ids, dir]);
         }
 
         for (const chunk of emitted) {
           const ids = getImports(chunk).filter(id => !moved.includes(id));
           if (ids.length === 0) continue;
           const name = getName(chunk);
-          emittedList.push([name, ids]);
+          const dir = getDir(chunk);
+          emittedList.push([name, ids, dir]);
         }
+      }
+
+      if (preserveStyleImport) {
+        emittedList = extractEmittedList(emittedList, loaderOpts.extensions);
+        writeStylesImportsForChunk({
+          chunks,
+          pluginContext: this,
+          loaders,
+          emittedList,
+        });
       }
 
       for await (const [name, ids] of emittedList) {
@@ -293,7 +328,13 @@ export default (options: Options = {}): Plugin => {
           res.map = resMin.map?.toString();
         }
 
-        const cssFile = { type: "asset" as const, name: res.name, source: res.css };
+        const cssFile = {
+          type: "asset" as const,
+          fileName: res.name,
+          name: res.name,
+          source: res.css
+        };
+
         const cssFileId = this.emitFile(cssFile);
 
         if (res.map && sourceMap) {
@@ -303,8 +344,8 @@ export default (options: Options = {}): Plugin => {
             typeof opts.assetFileNames === "string"
               ? normalizePath(path.dirname(opts.assetFileNames))
               : typeof opts.assetFileNames === "function"
-              ? normalizePath(path.dirname(opts.assetFileNames(cssFile)))
-              : "assets"; // Default for Rollup v2
+                ? normalizePath(path.dirname(opts.assetFileNames(cssFile)))
+                : "assets"; // Default for Rollup v2
 
           const map = mm(res.map)
             .modify(m => (m.file = path.basename(fileName)))
@@ -334,3 +375,72 @@ export default (options: Options = {}): Plugin => {
 
   return plugin;
 };
+
+// [name, [id], dir]
+type EmittedItem = [string, string[], string];
+
+/**
+ * 按照单个css文件维度提取EmittedList
+ */
+function extractEmittedList(emittedList: EmittedItem[], extensions: string[]): EmittedItem[] {
+
+  const list: EmittedItem[] = [];
+
+  for (const emittedItem of emittedList.reverse()) {
+    const [, ids, dir] = emittedItem;
+    for (const id of ids) {
+      let name = id.replace(`${dir}/`, '');
+
+      // 去掉后缀
+      for (const extension of extensions) {
+        const reg = new RegExp(`${extension.replace('.', '\\.')}$`);
+        if (reg.test(name)) {
+          name = name.replace(reg, '');
+          break;
+        }
+      };
+      if (list.some(item => item[0] === name)) continue;
+      list.push([name, [id], dir]);
+    }
+  }
+
+  return list;
+}
+
+// 写入样式引入语句到chunk
+function writeStylesImportsForChunk(opts: {
+  chunks: OutputChunk[]
+  pluginContext: PluginContext;
+  loaders: Loaders;
+  emittedList: EmittedItem[];
+}) {
+  const { chunks, pluginContext, loaders, emittedList } = opts
+
+  // 样式源文件与生成的样式文件映射
+  const emittedMap: Record<string, string> = {};
+  for (const emittedItem of emittedList) {
+    const [ emittedName, [ emittedId ] ] = emittedItem;
+    emittedMap[emittedId] = emittedName
+  }
+
+  for (const chunk of chunks) {
+    const moduleId = chunk.facadeModuleId;
+    if (!moduleId) continue;
+    const moduleInfo = pluginContext.getModuleInfo(moduleId);
+    if (!moduleInfo) continue;
+
+    // 找到每个chunk引入的css文件
+    const styleImporters = moduleInfo.importedIds.filter(id => loaders.isSupported(id));
+    if (styleImporters.length === 0) continue;
+
+
+    for (const importedId of styleImporters.reverse()) {
+      const styleName = emittedMap[importedId];
+      if (!styleName) continue;
+      // 如果有对应生成样式，则写入import语句
+      const importString = `import './${path.relative(path.dirname(chunk.fileName), styleName)}.css';`;
+      chunk.code = `${importString}\n${chunk.code}`
+    }
+  }
+  
+}

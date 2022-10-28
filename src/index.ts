@@ -17,6 +17,7 @@ import {
   ensurePCSSOption,
   ensurePCSSPlugins,
 } from "./utils/options";
+import { log } from './utils/log';
 
 export default (options: Options = {}): Plugin => {
   const isIncluded = createFilter(options.include, options.exclude);
@@ -54,6 +55,9 @@ export default (options: Options = {}): Plugin => {
     loaderOpts.postcss.stringifier = ensurePCSSOption(options.stringifier, "stringifier");
 
   if (options.plugins) loaderOpts.postcss.plugins = ensurePCSSPlugins(options.plugins);
+
+
+  log('~~loaderOpts~~\n', loaderOpts);
 
   const loaders = new Loaders({
     use: [["postcss", loaderOpts], ...ensureUseOption(options), ["sourcemap", {}]],
@@ -151,6 +155,10 @@ export default (options: Options = {}): Plugin => {
     },
 
     async generateBundle(opts, bundle) {
+
+      log('~~opts~~\n', opts)
+      log('~~bundle~~\n', bundle)
+
       if (extracted.length === 0 || !(opts.dir || opts.file)) return;
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- either `file` or `dir` are always present

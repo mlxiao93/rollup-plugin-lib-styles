@@ -46,7 +46,7 @@ const loader: Loader<PostCSSLoaderOptions> = {
     const config = await loadConfig(this.id, options.config);
     const plugins: AcceptedPlugin[] = [];
     const autoModules = ensureAutoModules(options.autoModules, this.id);
-    const supportModules = Boolean(options.modules || autoModules);
+    const supportModules = options.autoModules ? autoModules : !!options.modules;
     const modulesExports: Record<string, string> = {};
 
     const postcssOpts: PostCSSOptions = {
@@ -170,6 +170,7 @@ const loader: Loader<PostCSSLoaderOptions> = {
         const injectorName = saferId("injector");
         const injectorCall = `${injectorName}(${cssVarName},${JSON.stringify(injectorOptions)});`;
 
+        // TODO 修改引用路径
         if (!injectorId) {
           const opts = { basedirs: [path.join(testing ? process.cwd() : __dirname, "runtime")] };
           injectorId = await resolveAsync(["./inject-css"], opts);

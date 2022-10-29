@@ -1,131 +1,72 @@
-# rollup-plugin-styles
+# rollup-plugin-lib-styles
 
-[![npm version](https://img.shields.io/npm/v/rollup-plugin-styles)](https://www.npmjs.com/package/rollup-plugin-styles)
-[![monthly downloads count](https://img.shields.io/npm/dm/rollup-plugin-styles)](https://www.npmjs.com/package/rollup-plugin-styles)
-[![required rollup version](https://img.shields.io/npm/dependency-version/rollup-plugin-styles/peer/rollup)](https://www.npmjs.com/package/rollup)
-[![build status](https://github.com/Anidetrix/rollup-plugin-styles/workflows/CI/badge.svg)](https://github.com/Anidetrix/rollup-plugin-styles/actions?query=workflow%3ACI)
-[![code coverage](https://codecov.io/gh/Anidetrix/rollup-plugin-styles/branch/main/graph/badge.svg)](https://codecov.io/gh/Anidetrix/rollup-plugin-styles)
-[![license](https://img.shields.io/github/license/Anidetrix/rollup-plugin-styles)](./LICENSE)
-[![financial contributors](https://opencollective.com/rollup-plugin-styles/tiers/badge.svg)](https://opencollective.com/rollup-plugin-styles)
+[![npm version](https://img.shields.io/npm/v/rollup-plugin-lib-styles)](https://www.npmjs.com/package/rollup-plugin-lib-styles)
+[![required rollup version](https://img.shields.io/npm/dependency-version/rollup-plugin-lib-styles/peer/rollup)](https://www.npmjs.com/package/rollup)
+<!-- [![monthly downloads count](https://img.shields.io/npm/dm/rollup-plugin-lib-styles)](https://www.npmjs.com/package/rollup-plugin-lib-styles) -->
+<!-- [![build status](https://github.com/mlxiao93/rollup-plugin-lib-styles/workflows/CI/badge.svg)](https://github.com/mlxiao93/rollup-plugin-lib-styles/actions?query=workflow%3ACI) -->
+<!-- [![code coverage](https://codecov.io/gh/mlxiao93/rollup-plugin-lib-styles/branch/main/graph/badge.svg)](https://codecov.io/gh/mlxiao93/rollup-plugin-lib-styles)
+[![license](https://img.shields.io/github/license/mlxiao93/rollup-plugin-lib-styles)](./LICENSE) -->
+<!-- [![financial contributors](https://opencollective.com/rollup-plugin-lib-styles/tiers/badge.svg)](https://opencollective.com/rollup-plugin-lib-styles) -->
 
-### 🎨 Universal [Rollup](https://github.com/rollup/rollup) plugin for styles:
+**🎨 Universal [Rollup](https://github.com/rollup/rollup) plugin for styles**
 
 - [PostCSS](https://github.com/postcss/postcss)
-- [Sass](https://github.com/sass/dart-sass)
-- [Less](https://github.com/less/less.js)
-- [Stylus](https://github.com/stylus/stylus)
 - [CSS Modules](https://github.com/css-modules/css-modules)
-- URL resolving/rewriting with asset handling
-- Ability to use `@import` statements inside regular CSS
+- [Sass](https://github.com/sass/dart-sass) / [Less](https://github.com/less/less.js) / [Stylus](https://github.com/stylus/stylus)
+- Complete code splitting support, with respect for multiple entries, preserveModules and manualChunks
 
 ...and more!
 
 ## Table of Contents
 
-- [Installation](#installation)
 - [Usage](#usage)
-  - [Importing a file](#importing-a-file)
-    - [CSS/Stylus](#cssstylus)
-    - [Sass/Less](#sassless)
-  - [CSS Injection](#css-injection)
   - [CSS Extraction](#css-extraction)
-  - [Emitting processed CSS](#emitting-processed-css)
+  - [CSS Injection](#css-injection)
+  - [PreserveStyleImport](#preservestyleimport)
   - [CSS Modules](#css-modules)
+  - [PostCSS](#postcss)
+  - [Emitting processed CSS](#emitting-processed-css);
   - [With Sass/Less/Stylus](#with-sasslessstylus)
 - [Configuration](#configuration)
 - [Why](#why)
 - [License](#license)
 - [Thanks](#thanks)
 
-## Installation
+## Usage
 
 ```bash
 # npm
-npm install -D rollup-plugin-styles
+npm install -D rollup-plugin-lib-styles
 # pnpm
-pnpm add -D rollup-plugin-styles
+pnpm add -D rollup-plugin-lib-styles
 # yarn
-yarn add rollup-plugin-styles --dev
+yarn add rollup-plugin-lib-styles --dev
 ```
-
-## Usage
 
 ```js
 // rollup.config.js
-import styles from "rollup-plugin-styles";
+import styles from "rollup-plugin-lib-styles";
 
 export default {
-  output: {
-    // Governs names of CSS files (for assets from CSS use `hash` option for url handler).
-    // Note: using value below will put `.css` files near js,
-    // but make sure to adjust `hash`, `assetDir` and `publicPath`
-    // options for url handler accordingly.
-    assetFileNames: "[name]-[hash][extname]",
-  },
   plugins: [styles()],
 };
 ```
 
-After that you can import CSS files in your code:
+### CSS Extraction
 
 ```js
-import "./style.css";
+styles({
+  mode: "extract", // Unnecessary, set by default
+  // ... or with relative to output dir/output file's basedir (but not outside of it)
+  mode: ["extract", "awesome-bundle.css"],
+});
 ```
-
-Default mode is `inject`, which means CSS is embedded inside JS and injected into `<head>` at runtime, with ability to pass options to CSS injector or even pass your own injector.
-
-CSS is available as default export in `inject` and `extract` modes, but if [CSS Modules](https://github.com/css-modules/css-modules) are enabled you need to use named `css` export.
-
-```js
-// Injects CSS, also available as `style` in this example
-import style from "./style.css";
-// Using named export of CSS string
-import { css } from "./style.css";
-```
-
-In `emit` mode none of the exports are available as CSS is purely processed and passed along the build pipeline, which is useful if you want to preprocess CSS before using it with CSS consuming plugins, e.g. [rollup-plugin-lit-css](https://github.com/bennypowers/rollup-plugin-lit-css).
-
-PostCSS configuration files will be found and loaded automatically, but this behavior is configurable using `config` option.
-
-### Importing a file
-
-#### CSS/Stylus
-
-```css
-/* Import from `node_modules` */
-@import "bulma/css/bulma";
-/* Local import */
-@import "./custom";
-/* ...or (if no package named `custom` in `node_modules`) */
-@import "custom";
-```
-
-#### Sass/Less
-
-You can prepend the path with `~` to resolve in `node_modules`:
-
-```scss
-// Import from `node_modules`
-@import "~bulma/css/bulma";
-// Local import
-@import "./custom";
-// ...or
-@import "custom";
-```
-
-Also note that partials are considered first, e.g.
-
-```scss
-@import "custom";
-```
-
-Will look for `_custom` first (_with the appropriate extension(s)_), and then for `custom` if `_custom` doesn't exist.
 
 ### CSS Injection
 
 ```js
 styles({
-  mode: "inject", // Unnecessary, set by default
+  mode: "inject",
   // ...or with custom options for injector
   mode: [
     "inject",
@@ -136,21 +77,77 @@ styles({
 });
 ```
 
-### CSS Extraction
+### PreserveStyleImport
+
+```js
+export default {
+  output: {
+    dir: 'es', 
+    format: 'es',
+    preserveModules: true,
+    preserveModulesRoot: 'src',
+  },
+  plugins: [styles({
+    preserveStyleImport: true,
+  })],
+};
+```
+
+`preserveStyleImport` （ 仅当`output.preserveModules 为 true` 时生效）
+
+- `true`: 只转换样式文件，不进行合并，同时会在引入样式文件的js模块保留保留引入语句。
+- `false`: 会将每个js模块引入的所有样式文件合并成一个文件。
+
+### [CSS Modules](https://github.com/css-modules/css-modules)
 
 ```js
 styles({
-  mode: "extract",
-  // ... or with relative to output dir/output file's basedir (but not outside of it)
-  mode: ["extract", "awesome-bundle.css"],
+  modules: true,
+  // ...or with custom options
+  modules: {
+    generateScopedName: '[dir]_[name]_[local]_[hash:6]'
+  },
+  // ...additionally using autoModules
+  autoModules: true, // set by default
+  // ...with custom regex
+  autoModules: /\.mod\.\S+$/,
+  // ...or custom function
+  autoModules: id => id.includes(".modular."),
 });
+```
+
+### PostCSS
+
+#### Use config file
+
+```js
+// postcss.config.js
+module.exports = {
+  plugins: [
+    require('autoprefixer')
+  ]
+}
+```
+
+PostCSS configuration files will be found and loaded automatically, but this behavior is configurable using config option.
+
+#### PostCSS config in plugin call
+
+```js
+import autoprefixer from 'autoprefixer';
+
+styles({
+  plugins: [
+    autoprefixer(),
+  ],
+})
 ```
 
 ### Emitting processed CSS
 
 ```js
 // rollup.config.js
-import styles from "rollup-plugin-styles";
+import styles from "rollup-plugin-lib-styles";
 
 // Any plugin which consumes pure CSS
 import litcss from "rollup-plugin-lit-css";
@@ -163,22 +160,6 @@ export default {
     litcss(),
   ],
 };
-```
-
-### [CSS Modules](https://github.com/css-modules/css-modules)
-
-```js
-styles({
-  modules: true,
-  // ...or with custom options
-  modules: {},
-  // ...additionally using autoModules
-  autoModules: true,
-  // ...with custom regex
-  autoModules: /\.mod\.\S+$/,
-  // ...or custom function
-  autoModules: id => id.includes(".modular."),
-});
 ```
 
 ### With Sass/Less/Stylus
@@ -231,35 +212,28 @@ That's it, now you can import `.scss` `.sass` `.less` `.styl` `.stylus` files in
 
 ## Configuration
 
-See [API Reference for `Options`](https://anidetrix.github.io/rollup-plugin-styles/interfaces/types.Options.html) for full list of available options.
+See [API Reference for `Options`](https://mlxiao93.github.io/rollup-plugin-lib-styles/interfaces/types.Options.html) for full list of available options.
 
 ## Why
 
-Because alternatives did not look good enough - they are either too basic, too buggy or poorly maintained.
+完整继承了[rollup-plugin-styles](https://github.com/Anidetrix/rollup-plugin-styles)的所有功能。
 
-For example, the main alternative (and inspiration) is [rollup-plugin-postcss](https://github.com/egoist/rollup-plugin-postcss), but at the time it is not actively maintained, has a bunch of critical bugs and subjectively lacks some useful features and quality of life improvements which should be a part of it.
+并做了下列改进：
 
-With that said, here is the basic list of things which differentiate this plugin from the aforementioned one:
-
-- Written completely in TypeScript
-- Up-to-date [CSS Modules](https://github.com/css-modules/css-modules) implementation
-- Built-in `@import` handler
-- Built-in assets handler
-- Ability to emit pure CSS for other plugins
-- Complete code splitting support, with respect for multiple entries, `preserveModules` and `manualChunks`
-- Multiple instances support, with check for already processed files
-- Proper sourcemaps, with included sources content by default
-- Respects `assetFileNames` for CSS file names
-- Respects sourcemaps from loaded files
-- Support for implementation forcing for Sass
-- Support for partials and `~` in Less import statements
-- More smaller things that I forgot
+- 支持 rollup@.3x
+- 修复了 preserveModules + extract 模式下生成的 css 文件被去重的问题。
+- 新增 preserveStyleImport 选项，可以只转换css，不做合并，并且保留 css 文件的引入语句。
+- 修复了 module 选项覆盖 autoModule 的问题。
+- 修改了一些默认选项，更符合使用习惯。
+  - `mode: extract`
+  - `autoModule: true`
 
 ## License
 
-MIT &copy; [Anton Kudryavtsev](https://github.com/Anidetrix)
+MIT &copy; [MaoLin Xiao](https://github.com/mlxiao93)
 
 ## Thanks
 
+- [rollup-plugin-styles](https://github.com/Anidetrix/rollup-plugin-styles) - for good reference 👍
 - [rollup-plugin-postcss](https://github.com/egoist/rollup-plugin-postcss) - for good reference 👍
 - [rollup](https://github.com/rollup/rollup) - for awesome bundler 😎

@@ -99,7 +99,6 @@ export default (options: Options = {}): Plugin => {
 
       for (const dep of ctx.deps) this.addWatchFile(dep);
 
-      // TODO 这里好像没啥卵用
       for (const [fileName, source] of ctx.assets) {
         this.emitFile({ type: "asset", fileName, source });
       }

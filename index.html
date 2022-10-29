@@ -1,0 +1,159 @@
+<!DOCTYPE html><html class="default"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>rollup-plugin-lib-styles</title><meta name="description" content="Documentation for rollup-plugin-lib-styles"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">rollup-plugin-lib-styles</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1> rollup-plugin-lib-styles</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#rollup-plugin-lib-styles" id="rollup-plugin-lib-styles" style="color: inherit; text-decoration: none;">
+  <h1>rollup-plugin-lib-styles</h1>
+</a>
+<p><a href="https://www.npmjs.com/package/rollup-plugin-lib-styles"><img src="https://img.shields.io/npm/v/rollup-plugin-lib-styles" alt="npm version"></a>
+<a href="https://www.npmjs.com/package/rollup"><img src="https://img.shields.io/npm/dependency-version/rollup-plugin-lib-styles/peer/rollup" alt="required rollup version"></a></p>
+<!-- [![monthly downloads count](https://img.shields.io/npm/dm/rollup-plugin-lib-styles)](https://www.npmjs.com/package/rollup-plugin-lib-styles) -->
+<!-- [![build status](https://github.com/mlxiao93/rollup-plugin-lib-styles/workflows/CI/badge.svg)](https://github.com/mlxiao93/rollup-plugin-lib-styles/actions?query=workflow%3ACI) -->
+<!-- [![code coverage](https://codecov.io/gh/mlxiao93/rollup-plugin-lib-styles/branch/main/graph/badge.svg)](https://codecov.io/gh/mlxiao93/rollup-plugin-lib-styles)
+[![license](https://img.shields.io/github/license/mlxiao93/rollup-plugin-lib-styles)](./LICENSE) -->
+<!-- [![financial contributors](https://opencollective.com/rollup-plugin-lib-styles/tiers/badge.svg)](https://opencollective.com/rollup-plugin-lib-styles) -->
+
+<p><strong>🎨 Universal <a href="https://github.com/rollup/rollup">Rollup</a> plugin for styles</strong></p>
+<ul>
+<li><a href="https://github.com/postcss/postcss">PostCSS</a></li>
+<li><a href="https://github.com/css-modules/css-modules">CSS Modules</a></li>
+<li><a href="https://github.com/sass/dart-sass">Sass</a> / <a href="https://github.com/less/less.js">Less</a> / <a href="https://github.com/stylus/stylus">Stylus</a></li>
+<li>Complete code splitting support, with respect for multiple entries, preserveModules and manualChunks</li>
+</ul>
+<p>...and more!</p>
+
+<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+  <h2>Table of Contents</h2>
+</a>
+<ul>
+<li><a href="#usage">Usage</a><ul>
+<li><a href="#css-extraction">CSS Extraction</a></li>
+<li><a href="#css-injection">CSS Injection</a></li>
+<li><a href="#preservestyleimport">PreserveStyleImport</a></li>
+<li><a href="#css-modules">CSS Modules</a></li>
+<li><a href="#postcss">PostCSS</a></li>
+<li><a href="#emitting-processed-css">Emitting processed CSS</a>;</li>
+<li><a href="#with-sasslessstylus">With Sass/Less/Stylus</a></li>
+</ul>
+</li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#why">Why</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#thanks">Thanks</a></li>
+</ul>
+
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
+<pre><code class="language-bash"><span class="hl-0"># npm</span><br/><span class="hl-1">npm install -D rollup-plugin-lib-styles</span><br/><span class="hl-0"># pnpm</span><br/><span class="hl-1">pnpm add -D rollup-plugin-lib-styles</span><br/><span class="hl-0"># yarn</span><br/><span class="hl-1">yarn add rollup-plugin-lib-styles --dev</span>
+</code></pre>
+<pre><code class="language-js"><span class="hl-0">// rollup.config.js</span><br/><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-3">styles</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&quot;rollup-plugin-lib-styles&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-2">export</span><span class="hl-1"> </span><span class="hl-2">default</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">plugins:</span><span class="hl-1"> [</span><span class="hl-5">styles</span><span class="hl-1">()],</span><br/><span class="hl-1">};</span>
+</code></pre>
+
+<a href="#css-extraction" id="css-extraction" style="color: inherit; text-decoration: none;">
+  <h3>CSS Extraction</h3>
+</a>
+<pre><code class="language-js"><span class="hl-5">styles</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-3">mode:</span><span class="hl-1"> </span><span class="hl-4">&quot;extract&quot;</span><span class="hl-1">, </span><span class="hl-0">// Unnecessary, set by default</span><br/><span class="hl-1">  </span><span class="hl-0">// ... or with relative to output dir/output file&#39;s basedir (but not outside of it)</span><br/><span class="hl-1">  </span><span class="hl-3">mode:</span><span class="hl-1"> [</span><span class="hl-4">&quot;extract&quot;</span><span class="hl-1">, </span><span class="hl-4">&quot;awesome-bundle.css&quot;</span><span class="hl-1">],</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#css-injection" id="css-injection" style="color: inherit; text-decoration: none;">
+  <h3>CSS Injection</h3>
+</a>
+<pre><code class="language-js"><span class="hl-5">styles</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-3">mode:</span><span class="hl-1"> </span><span class="hl-4">&quot;inject&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">// ...or with custom options for injector</span><br/><span class="hl-1">  </span><span class="hl-3">mode:</span><span class="hl-1"> [</span><br/><span class="hl-1">    </span><span class="hl-4">&quot;inject&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">    { </span><span class="hl-3">container:</span><span class="hl-1"> </span><span class="hl-4">&quot;body&quot;</span><span class="hl-1">, </span><span class="hl-3">singleTag:</span><span class="hl-1"> </span><span class="hl-6">true</span><span class="hl-1">, </span><span class="hl-3">prepend:</span><span class="hl-1"> </span><span class="hl-6">true</span><span class="hl-1">, </span><span class="hl-3">attributes:</span><span class="hl-1"> { </span><span class="hl-3">id:</span><span class="hl-1"> </span><span class="hl-4">&quot;global&quot;</span><span class="hl-1"> } },</span><br/><span class="hl-1">  ],</span><br/><span class="hl-1">  </span><span class="hl-0">// ...or with custom injector</span><br/><span class="hl-1">  </span><span class="hl-3">mode:</span><span class="hl-1"> [</span><span class="hl-4">&quot;inject&quot;</span><span class="hl-1">, (</span><span class="hl-3">varname</span><span class="hl-1">, </span><span class="hl-3">id</span><span class="hl-1">) </span><span class="hl-6">=&gt;</span><span class="hl-1"> </span><span class="hl-4">`console.log(</span><span class="hl-6">${</span><span class="hl-3">varname</span><span class="hl-6">}</span><span class="hl-4">,</span><span class="hl-6">${</span><span class="hl-7">JSON</span><span class="hl-8">.</span><span class="hl-5">stringify</span><span class="hl-8">(</span><span class="hl-3">id</span><span class="hl-8">)</span><span class="hl-6">}</span><span class="hl-4">)`</span><span class="hl-1">],</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#preservestyleimport" id="preservestyleimport" style="color: inherit; text-decoration: none;">
+  <h3>PreserveStyleImport</h3>
+</a>
+<pre><code class="language-js"><span class="hl-2">export</span><span class="hl-1"> </span><span class="hl-2">default</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">output:</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-3">dir:</span><span class="hl-1"> </span><span class="hl-4">&#39;es&#39;</span><span class="hl-1">, </span><br/><span class="hl-1">    </span><span class="hl-3">format:</span><span class="hl-1"> </span><span class="hl-4">&#39;es&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-3">preserveModules:</span><span class="hl-1"> </span><span class="hl-6">true</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-3">preserveModulesRoot:</span><span class="hl-1"> </span><span class="hl-4">&#39;src&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-3">plugins:</span><span class="hl-1"> [</span><span class="hl-5">styles</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-3">preserveStyleImport:</span><span class="hl-1"> </span><span class="hl-6">true</span><span class="hl-1">,</span><br/><span class="hl-1">  })],</span><br/><span class="hl-1">};</span>
+</code></pre>
+<p><code>preserveStyleImport</code> （ 仅当<code>output.preserveModules 为 true</code> 时生效）</p>
+<ul>
+<li><code>true</code>: 只转换样式文件，不进行合并，同时会在引入样式文件的js模块保留保留引入语句。</li>
+<li><code>false</code>: 会将每个js模块引入的所有样式文件合并成一个文件。</li>
+</ul>
+
+<a href="#css-modules" id="css-modules" style="color: inherit; text-decoration: none;">
+  <h3><a href="https://github.com/css-modules/css-modules">CSS Modules</a></h3>
+</a>
+<pre><code class="language-js"><span class="hl-5">styles</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-3">modules:</span><span class="hl-1"> </span><span class="hl-6">true</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">// ...or with custom options</span><br/><span class="hl-1">  </span><span class="hl-3">modules:</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-3">generateScopedName:</span><span class="hl-1"> </span><span class="hl-4">&#39;[dir]_[name]_[local]_[hash:6]&#39;</span><br/><span class="hl-1">  },</span><br/><span class="hl-1">  </span><span class="hl-0">// ...additionally using autoModules</span><br/><span class="hl-1">  </span><span class="hl-3">autoModules:</span><span class="hl-1"> </span><span class="hl-6">true</span><span class="hl-1">, </span><span class="hl-0">// set by default</span><br/><span class="hl-1">  </span><span class="hl-0">// ...with custom regex</span><br/><span class="hl-1">  </span><span class="hl-3">autoModules:</span><span class="hl-9"> /</span><span class="hl-10">\.</span><span class="hl-9">mod</span><span class="hl-10">\.</span><span class="hl-9">\S</span><span class="hl-11">+</span><span class="hl-12">$</span><span class="hl-9">/</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-0">// ...or custom function</span><br/><span class="hl-1">  </span><span class="hl-5">autoModules</span><span class="hl-3">:</span><span class="hl-1"> </span><span class="hl-3">id</span><span class="hl-1"> </span><span class="hl-6">=&gt;</span><span class="hl-1"> </span><span class="hl-3">id</span><span class="hl-1">.</span><span class="hl-5">includes</span><span class="hl-1">(</span><span class="hl-4">&quot;.modular.&quot;</span><span class="hl-1">),</span><br/><span class="hl-1">});</span>
+</code></pre>
+
+<a href="#postcss" id="postcss" style="color: inherit; text-decoration: none;">
+  <h3>PostCSS</h3>
+</a>
+
+<a href="#use-config-file" id="use-config-file" style="color: inherit; text-decoration: none;">
+  <h4>Use config file</h4>
+</a>
+<pre><code class="language-js"><span class="hl-0">// postcss.config.js</span><br/><span class="hl-7">module</span><span class="hl-1">.</span><span class="hl-7">exports</span><span class="hl-1"> = {</span><br/><span class="hl-1">  </span><span class="hl-3">plugins:</span><span class="hl-1"> [</span><br/><span class="hl-1">    </span><span class="hl-5">require</span><span class="hl-1">(</span><span class="hl-4">&#39;autoprefixer&#39;</span><span class="hl-1">)</span><br/><span class="hl-1">  ]</span><br/><span class="hl-1">}</span>
+</code></pre>
+<p>PostCSS configuration files will be found and loaded automatically, but this behavior is configurable using config option.</p>
+
+<a href="#postcss-config-in-plugin-call" id="postcss-config-in-plugin-call" style="color: inherit; text-decoration: none;">
+  <h4>PostCSS config in plugin call</h4>
+</a>
+<pre><code class="language-js"><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-3">autoprefixer</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&#39;autoprefixer&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">styles</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-3">plugins:</span><span class="hl-1"> [</span><br/><span class="hl-1">    </span><span class="hl-5">autoprefixer</span><span class="hl-1">(),</span><br/><span class="hl-1">  ],</span><br/><span class="hl-1">})</span>
+</code></pre>
+
+<a href="#emitting-processed-css" id="emitting-processed-css" style="color: inherit; text-decoration: none;">
+  <h3>Emitting processed CSS</h3>
+</a>
+<pre><code class="language-js"><span class="hl-0">// rollup.config.js</span><br/><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-3">styles</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&quot;rollup-plugin-lib-styles&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-0">// Any plugin which consumes pure CSS</span><br/><span class="hl-2">import</span><span class="hl-1"> </span><span class="hl-3">litcss</span><span class="hl-1"> </span><span class="hl-2">from</span><span class="hl-1"> </span><span class="hl-4">&quot;rollup-plugin-lit-css&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-2">export</span><span class="hl-1"> </span><span class="hl-2">default</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">plugins:</span><span class="hl-1"> [</span><br/><span class="hl-1">    </span><span class="hl-5">styles</span><span class="hl-1">({ </span><span class="hl-3">mode:</span><span class="hl-1"> </span><span class="hl-4">&quot;emit&quot;</span><span class="hl-1"> }),</span><br/><br/><span class="hl-1">    </span><span class="hl-0">// Make sure to list it after this one</span><br/><span class="hl-1">    </span><span class="hl-5">litcss</span><span class="hl-1">(),</span><br/><span class="hl-1">  ],</span><br/><span class="hl-1">};</span>
+</code></pre>
+
+<a href="#with-sasslessstylus" id="with-sasslessstylus" style="color: inherit; text-decoration: none;">
+  <h3>With Sass/Less/Stylus</h3>
+</a>
+<p>Install corresponding dependency:</p>
+<ul>
+<li><p>For <code>Sass</code> support install <code>sass</code> or <code>node-sass</code>:</p>
+<pre><code class="language-bash"><span class="hl-0"># npm</span><br/><span class="hl-1">npm install -D sass</span><br/><span class="hl-0"># pnpm</span><br/><span class="hl-1">pnpm add -D sass</span><br/><span class="hl-0"># yarn</span><br/><span class="hl-1">yarn add sass --dev</span>
+</code></pre>
+<pre><code class="language-bash"><span class="hl-0"># npm</span><br/><span class="hl-1">npm install -D node-sass</span><br/><span class="hl-0"># pnpm</span><br/><span class="hl-1">pnpm add -D node-sass</span><br/><span class="hl-0"># yarn</span><br/><span class="hl-1">yarn add node-sass --dev</span>
+</code></pre>
+</li>
+<li><p>For <code>Less</code> support install <code>less</code>:</p>
+<pre><code class="language-bash"><span class="hl-0"># npm</span><br/><span class="hl-1">npm install -D less</span><br/><span class="hl-0"># pnpm</span><br/><span class="hl-1">pnpm add -D less</span><br/><span class="hl-0"># yarn</span><br/><span class="hl-1">yarn add less --dev</span>
+</code></pre>
+</li>
+<li><p>For <code>Stylus</code> support install <code>stylus</code>:</p>
+<pre><code class="language-bash"><span class="hl-0"># npm</span><br/><span class="hl-1">npm install -D stylus</span><br/><span class="hl-0"># pnpm</span><br/><span class="hl-1">pnpm add -D stylus</span><br/><span class="hl-0"># yarn</span><br/><span class="hl-1">yarn add stylus --dev</span>
+</code></pre>
+</li>
+</ul>
+<p>That&#39;s it, now you can import <code>.scss</code> <code>.sass</code> <code>.less</code> <code>.styl</code> <code>.stylus</code> files in your code.</p>
+
+<a href="#configuration" id="configuration" style="color: inherit; text-decoration: none;">
+  <h2>Configuration</h2>
+</a>
+<p>See <a href="https://mlxiao93.github.io/rollup-plugin-lib-styles/interfaces/types.Options.html">API Reference for <code>Options</code></a> for full list of available options.</p>
+
+<a href="#why" id="why" style="color: inherit; text-decoration: none;">
+  <h2>Why</h2>
+</a>
+<p>完整继承了<a href="https://github.com/Anidetrix/rollup-plugin-styles">rollup-plugin-styles</a>的所有功能。</p>
+<p>并做了下列改进：</p>
+<ul>
+<li>支持 rollup@.3x</li>
+<li>修复了 preserveModules + extract 模式下生成的 css 文件被去重的问题。</li>
+<li>新增 preserveStyleImport 选项，可以只转换css，不做合并，并且保留 css 文件的引入语句。</li>
+<li>修复了 module 选项覆盖 autoModule 的问题。</li>
+<li>修改了一些默认选项，更符合使用习惯。<ul>
+<li><code>mode: extract</code></li>
+<li><code>autoModule: true</code></li>
+</ul>
+</li>
+</ul>
+
+<a href="#license" id="license" style="color: inherit; text-decoration: none;">
+  <h2>License</h2>
+</a>
+<p>MIT &copy; <a href="https://github.com/mlxiao93">MaoLin Xiao</a></p>
+
+<a href="#thanks" id="thanks" style="color: inherit; text-decoration: none;">
+  <h2>Thanks</h2>
+</a>
+<ul>
+<li><a href="https://github.com/Anidetrix/rollup-plugin-styles">rollup-plugin-styles</a> - for good reference 👍</li>
+<li><a href="https://github.com/egoist/rollup-plugin-postcss">rollup-plugin-postcss</a> - for good reference 👍</li>
+<li><a href="https://github.com/rollup/rollup">rollup</a> - for awesome bundler 😎</li>
+</ul>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Modules</a></li><li class=" tsd-kind-module"><a href="modules/index.html">index</a></li><li class=" tsd-kind-module"><a href="modules/loaders.html">loaders</a></li><li class=" tsd-kind-module"><a href="modules/loaders_less.html">loaders/less</a></li><li class=" tsd-kind-module"><a href="modules/loaders_less_importer.html">loaders/less/importer</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss.html">loaders/postcss</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_common.html">loaders/postcss/common</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_config.html">loaders/postcss/config</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_icss.html">loaders/postcss/icss</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_icss_load.html">loaders/postcss/icss/load</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_icss_resolve.html">loaders/postcss/icss/resolve</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_import.html">loaders/postcss/import</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_import_resolve.html">loaders/postcss/import/resolve</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_modules.html">loaders/postcss/modules</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_modules_generate.html">loaders/postcss/modules/generate</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_noop.html">loaders/postcss/noop</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_url.html">loaders/postcss/url</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_url_generate.html">loaders/postcss/url/generate</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_url_inline.html">loaders/postcss/url/inline</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_url_resolve.html">loaders/postcss/url/resolve</a></li><li class=" tsd-kind-module"><a href="modules/loaders_postcss_url_utils.html">loaders/postcss/url/utils</a></li><li class=" tsd-kind-module"><a href="modules/loaders_sass.html">loaders/sass</a></li><li class=" tsd-kind-module"><a href="modules/loaders_sass_importer.html">loaders/sass/importer</a></li><li class=" tsd-kind-module"><a href="modules/loaders_sass_load.html">loaders/sass/load</a></li><li class=" tsd-kind-module"><a href="modules/loaders_sourcemap.html">loaders/sourcemap</a></li><li class=" tsd-kind-module"><a href="modules/loaders_stylus.html">loaders/stylus</a></li><li class=" tsd-kind-module"><a href="modules/loaders_types.html">loaders/types</a></li><li class=" tsd-kind-module"><a href="modules/shims_icss_utils.html">shims/icss-<wbr/>utils</a></li><li class=" tsd-kind-module"><a href="modules/shims_less.html">shims/less</a></li><li class=" tsd-kind-module"><a href="modules/shims_postcss_modules.html">shims/postcss-<wbr/>modules</a></li><li class=" tsd-kind-module"><a href="modules/shims_sass.html">shims/sass</a></li><li class=" tsd-kind-module"><a href="modules/shims_stylus.html">shims/stylus</a></li><li class=" tsd-kind-module"><a href="modules/types.html">types</a></li><li class=" tsd-kind-module"><a href="modules/utils_array_fmt.html">utils/array-<wbr/>fmt</a></li><li class=" tsd-kind-module"><a href="modules/utils_concat.html">utils/concat</a></li><li class=" tsd-kind-module"><a href="modules/utils_hasher.html">utils/hasher</a></li><li class=" tsd-kind-module"><a href="modules/utils_load_module.html">utils/load-<wbr/>module</a></li><li class=" tsd-kind-module"><a href="modules/utils_log.html">utils/log</a></li><li class=" tsd-kind-module"><a href="modules/utils_options.html">utils/options</a></li><li class=" tsd-kind-module"><a href="modules/utils_path.html">utils/path</a></li><li class=" tsd-kind-module"><a href="modules/utils_resolve.html">utils/resolve</a></li><li class=" tsd-kind-module"><a href="modules/utils_safe_id.html">utils/safe-<wbr/>id</a></li><li class=" tsd-kind-module"><a href="modules/utils_sourcemap.html">utils/sourcemap</a></li><li class=" tsd-kind-module"><a href="modules/utils_url.html">utils/url</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li><li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li><li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li><li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li><li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li><li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>

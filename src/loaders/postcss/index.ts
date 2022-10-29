@@ -170,7 +170,6 @@ const loader: Loader<PostCSSLoaderOptions> = {
         const injectorName = saferId("injector");
         const injectorCall = `${injectorName}(${cssVarName},${JSON.stringify(injectorOptions)});`;
 
-        // TODO 修改引用路径
         if (!injectorId) {
           const opts = { basedirs: [path.join(testing ? process.cwd() : __dirname, "runtime")] };
           injectorId = await resolveAsync(["./inject-css"], opts);

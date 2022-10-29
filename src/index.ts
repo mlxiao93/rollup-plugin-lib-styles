@@ -17,12 +17,12 @@ import {
   ensurePCSSOption,
   ensurePCSSPlugins,
 } from "./utils/options";
-import { log } from './utils/log';
 
 export default (options: Options = {}): Plugin => {
   const isIncluded = createFilter(options.include, options.exclude);
 
   const sourceMap = inferSourceMapOption(options.sourceMap);
+
   const loaderOpts: PostCSSLoaderOptions = {
     ...inferModeOption(options.mode),
 
@@ -35,7 +35,7 @@ export default (options: Options = {}): Plugin => {
     to: options.to,
     dts: options.dts ?? false,
     namedExports: options.namedExports ?? false,
-    autoModules: options.autoModules ?? false,
+    autoModules: options.autoModules ?? true,
     extensions: options.extensions ?? [".css", ".scss", ".pcss", ".postcss", ".sss"],
     postcss: {},
   };
@@ -55,9 +55,6 @@ export default (options: Options = {}): Plugin => {
     loaderOpts.postcss.stringifier = ensurePCSSOption(options.stringifier, "stringifier");
 
   if (options.plugins) loaderOpts.postcss.plugins = ensurePCSSPlugins(options.plugins);
-
-
-  log('~~loaderOpts~~\n', loaderOpts);
 
   const loaders = new Loaders({
     use: [["postcss", loaderOpts], ...ensureUseOption(options), ["sourcemap", {}]],
@@ -155,9 +152,6 @@ export default (options: Options = {}): Plugin => {
     },
 
     async generateBundle(opts, bundle) {
-
-      log('~~opts~~\n', opts)
-      log('~~bundle~~\n', bundle)
 
       if (extracted.length === 0 || !(opts.dir || opts.file)) return;
 

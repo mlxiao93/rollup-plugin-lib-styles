@@ -28,8 +28,8 @@ export function inferModeOption(mode: Options["mode"]): Mode {
     throw new Error(`Incorrect mode provided, allowed modes are ${modesFmt}`);
 
   return {
-    inject: (!m[0] || m[0] === "inject") && (m[1] ?? true),
-    extract: m[0] === "extract" && (m[1] ?? true),
+    inject: (m[0] === "inject") && (m[1] ?? true),
+    extract: (!m[0] || m[0] === "extract") && (m[1] ?? true),
     emit: m[0] === "emit",
   };
 }

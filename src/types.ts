@@ -132,16 +132,16 @@ export interface Options {
       )[];
   /**
    * Select mode for this plugin:
-   * - `"inject"` *(default)* - Embeds CSS inside JS and injects it into `<head>` at runtime.
+   * - `"inject"` - Embeds CSS inside JS and injects it into `<head>` at runtime.
    * You can also pass options for CSS injection.
    * Alternatively, you can pass your own CSS injector.
-   * - `"extract"` - Extract CSS to the same location where JS file is generated but with `.css` extension.
+   * - `"extract"` *(default)*  - Extract CSS to the same location where JS file is generated but with `.css` extension.
    * You can also set extraction path manually,
    * relative to output dir/output file's basedir,
    * but not outside of it.
    * - `"emit"` - Emit pure processed CSS and pass it along the build pipeline.
    * Useful if you want to preprocess CSS before using it with CSS consuming plugins.
-   * @default "inject"
+   * @default "extract"
    */
   mode?:
     | "inject"
@@ -192,7 +192,7 @@ export interface Options {
    * for files named `[name].module.[ext]`
    * (e.g. `foo.module.css`, `bar.module.stylus`),
    * or pass your own function or regular expression
-   * @default false
+   * @default true
    */
   autoModules?: boolean | RegExp | ((id: string) => boolean);
   /**

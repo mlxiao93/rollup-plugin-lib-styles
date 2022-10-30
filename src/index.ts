@@ -160,7 +160,7 @@ export default (options: Options = {}): Plugin => {
       const manual = chunks.filter(c => !c.facadeModuleId);
 
       // 是否保留样式引入
-      const preserveStyleImport = !!options.preserveStyleImport && opts.preserveModules && options.mode === 'extract';
+      const preserveStyleImport = !!options.preserveStyleImport && opts.preserveModules && (!options.mode || options.mode === 'extract');
 
       const emitted = opts.preserveModules
         ? chunks

@@ -230,7 +230,7 @@ export default (options: Options = {}): Plugin => {
             }
           }
 
-          return moduleId.replace(/\.(tsx|jsx|es6|es|mjs)$/, '.js').replace(`/${fileName}`, '')
+          return moduleId.replace(/\.(ts|tsx|jsx|es6|es|mjs)$/, '.js').replace(`/${fileName}`, '')
         }
         return path.resolve(process.cwd(), 'src');
       };

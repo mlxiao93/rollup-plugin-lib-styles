@@ -214,10 +214,14 @@ export default (options: Options = {}): Plugin => {
         return chunk.name;
       };
 
+      // get out dir from OutputChunk
+      // TODO find a perfect way
       const getDir = (chunk: OutputChunk): string => {
-        if (chunk.facadeModuleId) {
+        const moduleId = chunk.facadeModuleId
+        if (moduleId) {
 
           let fileName = chunk.fileName;
+          // const fileNameWithoutExt = fileName.replace(/\.\d+$/, '');
           for (const extension of loaderOpts.extensions) {
             const reg = new RegExp(`${extension.replace('.', '\\.')}.js$`);
             if (reg.test(fileName)) {
@@ -226,7 +230,7 @@ export default (options: Options = {}): Plugin => {
             }
           }
 
-          return chunk.facadeModuleId.replace(`/${fileName}`, '')
+          return moduleId.replace(/\.(tsx|jsx|es6|es|mjs)$/, '.js').replace(`/${fileName}`, '')
         }
         return path.resolve(process.cwd(), 'src');
       };

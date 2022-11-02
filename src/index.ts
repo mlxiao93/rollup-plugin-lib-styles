@@ -396,6 +396,9 @@ function extractEmittedList(emittedList: EmittedItem[], extensions: string[]): E
     for (const id of ids) {
       let name = id.replace(`${dir}/`, '');
 
+      // 去掉node_modules的绝对路径
+      name = name.replace(/.*?\/node_modules/, 'node_modules');
+
       // 去掉后缀
       for (const extension of extensions) {
         const reg = new RegExp(`${extension.replace('.', '\\.')}$`);

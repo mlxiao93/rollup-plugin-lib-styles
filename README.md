@@ -220,7 +220,7 @@ See [API Reference for `Options`](https://mlxiao93.github.io/rollup-plugin-lib-s
 
 并做了下列改进：
 
-- 支持 rollup@.3x
+- 支持 rollup@3x
 - 修复了 preserveModules + extract 模式下生成的 css 文件被去重的问题。
 - 新增 preserveStyleImport 选项，可以只转换css，不做合并，并且保留 css 文件的引入语句。
 - 修复了 module 选项覆盖 autoModule 的问题。

@@ -1,5 +1,5 @@
 import path from "path";
-import { Plugin, OutputChunk, OutputAsset, PluginContext } from "rollup";
+import { Plugin, OutputChunk, OutputAsset, PluginContext, NormalizedOutputOptions } from "rollup";
 import { createFilter } from "@rollup/pluginutils";
 import cssnano from "cssnano";
 import { LoaderContext, Extracted } from "./loaders/types";
@@ -151,7 +151,6 @@ export default (options: Options = {}): Plugin => {
     },
 
     async generateBundle(opts, bundle) {
-
       if (extracted.length === 0 || !(opts.dir || opts.file)) return;
 
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- either `file` or `dir` are always present
@@ -160,7 +159,7 @@ export default (options: Options = {}): Plugin => {
       const manual = chunks.filter(c => !c.facadeModuleId);
 
       // 是否保留样式引入
-      const preserveStyleImport = !!options.preserveStyleImport && opts.preserveModules && (!options.mode || options.mode === 'extract');
+      const preserveStyleModules = !!options.preserveStyleModules && opts.preserveModules && (!options.mode || options.mode === 'extract');
 
       const emitted = opts.preserveModules
         ? chunks
@@ -295,9 +294,10 @@ export default (options: Options = {}): Plugin => {
         }
       }
 
-      if (preserveStyleImport) {
+      if (preserveStyleModules) {
         emittedList = extractEmittedList(emittedList, loaderOpts.extensions);
         writeStylesImportsForChunk({
+          outputOpts: opts,
           chunks,
           pluginContext: this,
           loaders,
@@ -417,12 +417,20 @@ function extractEmittedList(emittedList: EmittedItem[], extensions: string[]): E
 
 // 写入样式引入语句到chunk
 function writeStylesImportsForChunk(opts: {
+  outputOpts: NormalizedOutputOptions;
   chunks: OutputChunk[]
   pluginContext: PluginContext;
   loaders: Loaders;
   emittedList: EmittedItem[];
 }) {
-  const { chunks, pluginContext, loaders, emittedList } = opts
+  const { chunks, pluginContext, loaders, emittedList, outputOpts } = opts
+
+  const { format } = outputOpts;
+
+  const isEsOutput = ['es', 'esm', 'module'].includes(format);
+  const isCjsOutput = ['cjs', 'commonjs'].includes(format);
+
+  if (!isEsOutput && !isCjsOutput) return;
 
   // 样式源文件与生成的样式文件映射
   const emittedMap: Record<string, string> = {};
@@ -446,8 +454,11 @@ function writeStylesImportsForChunk(opts: {
       const styleName = emittedMap[importedId];
       if (!styleName) continue;
       // 如果有对应生成样式，则写入import语句
-      const importString = `import './${path.relative(path.dirname(chunk.fileName), styleName)}.css';`;
-      chunk.code = `${importString}\n${chunk.code}`
+      let importString = `require('./${path.relative(path.dirname(chunk.fileName), styleName)}.css');`
+      if (isEsOutput) {
+        importString = `import './${path.relative(path.dirname(chunk.fileName), styleName)}.css';`;
+      }
+      chunk.code = `${importString}\n${chunk.code}`;
     }
   }
   

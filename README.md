@@ -22,7 +22,7 @@
 - [Usage](#usage)
   - [CSS Extraction](#css-extraction)
   - [CSS Injection](#css-injection)
-  - [PreserveStyleImport](#preservestyleimport)
+  - [preserveStyleModules](#preservestylemodules)
   - [CSS Modules](#css-modules)
   - [PostCSS](#postcss)
   - [Emitting processed CSS](#emitting-processed-css);
@@ -77,7 +77,7 @@ styles({
 });
 ```
 
-### PreserveStyleImport
+### preserveStyleModules
 
 ```js
 export default {
@@ -88,12 +88,12 @@ export default {
     preserveModulesRoot: 'src',
   },
   plugins: [styles({
-    preserveStyleImport: true,
+    preserveStyleModules: true,
   })],
 };
 ```
 
-`preserveStyleImport` （ 仅当`output.preserveModules 为 true` 时生效）
+`preserveStyleModules` （ 仅当`output.preserveModules 为 true` 时生效）
 
 - `true`: 只转换样式文件，不进行合并，同时会在引入样式文件的js模块保留保留引入语句。
 - `false`: 会将每个js模块引入的所有样式文件合并成一个文件。
@@ -222,7 +222,7 @@ See [API Reference for `Options`](https://mlxiao93.github.io/rollup-plugin-lib-s
 
 - 支持 rollup@3x
 - 修复了 preserveModules + extract 模式下生成的 css 文件被去重的问题。
-- 新增 preserveStyleImport 选项，可以只转换css，不做合并，并且保留 css 文件的引入语句。
+- 新增 preserveStyleModules 选项，可以只转换css，不做合并，并且保留 css 文件的引入语句。
 - 修复了 module 选项覆盖 autoModule 的问题。
 - 修改了一些默认选项，更符合使用习惯。
   - `mode: extract`

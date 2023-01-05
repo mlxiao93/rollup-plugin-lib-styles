@@ -157,7 +157,7 @@ export interface Options {
    * 生效时，样式文件不会被合并，并且会在js chunk中保留样式的引入语句
    * @default false
    */
-  preserveStyleImport?: boolean;
+  preserveStyleModules?: boolean;
   /** `to` option for PostCSS, required for some plugins */
   to?: string;
   /**

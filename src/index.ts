@@ -295,7 +295,8 @@ export default (options: Options = {}): Plugin => {
       }
 
       if (preserveStyleModules) {
-        emittedList = extractEmittedList(emittedList, loaderOpts.extensions);
+        emittedList = extractEmittedList(emittedList, loaderOpts.extensions, extracted);
+
         writeStylesImportsForChunk({
           outputOpts: opts,
           chunks,
@@ -387,7 +388,7 @@ type EmittedItem = [string, string[], string];
 /**
  * 按照单个css文件维度提取EmittedList
  */
-function extractEmittedList(emittedList: EmittedItem[], extensions: string[]): EmittedItem[] {
+function extractEmittedList(emittedList: EmittedItem[], extensions: string[], extracted: Extracted[]): EmittedItem[] {
 
   const list: EmittedItem[] = [];
 
@@ -408,6 +409,8 @@ function extractEmittedList(emittedList: EmittedItem[], extensions: string[]): E
         }
       };
       if (list.some(item => item[0] === name)) continue;
+      // 避免生成空文件
+      if (!extracted.some(item => item.id === id)) continue;
       list.push([name, [id], dir]);
     }
   }

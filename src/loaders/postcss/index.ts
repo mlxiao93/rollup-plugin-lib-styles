@@ -47,7 +47,7 @@ const loader: Loader<PostCSSLoaderOptions> = {
     const plugins: AcceptedPlugin[] = [];
     const autoModules = ensureAutoModules(options.autoModules, this.id);
     let supportModules = false;
-    if (options.modules === true) {
+    if (options.modules) {
       supportModules = true;
     } else if (autoModules) {
       supportModules = true;

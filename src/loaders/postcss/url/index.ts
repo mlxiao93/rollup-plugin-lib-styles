@@ -153,7 +153,7 @@ const plugin: PluginCreator<UrlOptions> = (options = {}) => {
         }
 
         if (!resolved) {
-          decl.warn(res, `Unresolved URL \`${url}\` in \`${decl.toString()}\``);
+          // decl.warn(res, `Unresolved URL \`${url}\` in \`${decl.toString()}\``);
           continue;
         }
 

@@ -205,12 +205,14 @@ export default (options: Options = {}): Plugin => {
       };
 
       const getName = (chunk: OutputChunk): string => {
-        if (opts.file) return path.parse(opts.file).name;
-        if (opts.preserveModules) {
+        let finalName = chunk.name;
+        if (opts.file) {
+          finalName = path.parse(opts.file).name;
+        } else if (opts.preserveModules) {
           const { dir, name } = path.parse(chunk.fileName);
-          return dir ? `${dir}/${name}` : name;
+          finalName = dir ? `${dir}/${name}` : name;
         }
-        return chunk.name;
+        return finalName;
       };
 
       // get out dir from OutputChunk
@@ -336,8 +338,8 @@ export default (options: Options = {}): Plugin => {
 
         const cssFile = {
           type: "asset" as const,
-          fileName: res.name,
-          name: res.name,
+          fileName: renameModule(res.name),
+          name: renameModule(res.name),
           source: res.css
         };
 
@@ -438,7 +440,7 @@ function writeStylesImportsForChunk(opts: {
   // 样式源文件与生成的样式文件映射
   const emittedMap: Record<string, string> = {};
   for (const emittedItem of emittedList) {
-    const [ emittedName, [ emittedId ] ] = emittedItem;
+    const [emittedName, [emittedId]] = emittedItem;
     emittedMap[emittedId] = emittedName
   }
 
@@ -457,12 +459,18 @@ function writeStylesImportsForChunk(opts: {
       const styleName = emittedMap[importedId];
       if (!styleName) continue;
       // 如果有对应生成样式，则写入import语句
-      let importString = `require('./${path.relative(path.dirname(chunk.fileName), styleName)}.css');`
+      let importString = `require('./${path.relative(path.dirname(chunk.fileName), renameModule(styleName))}.css');`
       if (isEsOutput) {
-        importString = `import './${path.relative(path.dirname(chunk.fileName), styleName)}.css';`;
+        importString = `import './${path.relative(path.dirname(chunk.fileName), renameModule(styleName))}.css';`;
       }
       chunk.code = `${importString}\n${chunk.code}`;
     }
   }
-  
+}
+
+/**
+ * 重命名 *.module.css，防止产物被css module重复处理
+ */
+function renameModule(name: string,) {
+  return name.replace('.module', 'module');
 }
